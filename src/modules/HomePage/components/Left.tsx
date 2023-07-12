@@ -23,16 +23,16 @@ export const Left = () => {
         >
           We Have{" "}
           <span style={{ color: "#2f2f2f" }}>
-            <CountUp end={208000} duration={3} /> +
+            <CountUp end={100} duration={3} /> +
           </span>{" "}
-          Live Jobs
+          Food & Drink
         </Typography>
         <Typography variant={width > 1024 ? "h1" : "h5"} fontWeight={500}>
-          Your <Span>Dream Job</Span> in one place
+          <Span>The Best Food</Span> you can be found here.
         </Typography>
         <Typography variant="body2">
-          Find jobs that match your interests with us. Sales IQ provides a place
-          you to find your Job.
+          Search and order delicious food here. We are always ready to serve
+          you.
         </Typography>
         <Button
           variant="contained"
@@ -40,7 +40,7 @@ export const Left = () => {
           style={{ fontWeight: 600 }}
           onClick={onClick}
         >
-          Get Started
+          {"Let's start buying"}
         </Button>
       </Stack>
     </Grid>
