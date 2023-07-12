@@ -3,7 +3,7 @@ import { Box, Card, styled } from "@mui/material";
 const BoxBackground = styled("div")(() => ({
   backgroundImage: "url(/images/home/home-banner.jpg)",
   backgroundSize: "cover",
-  height: "200px",
+  height: "800px",
   "@media (max-width:1024px)": {
     padding: "0 10px",
   },
@@ -21,8 +21,9 @@ const BoxManImage = styled(Box)(() => ({
   marginTop: "25%",
   textAlign: "right",
   position: "relative",
+  right: "-80px",
   img: {
-    width: "72%",
+    width: "80%",
     verticalAlign: "middle",
     borderRadius: "30px",
     zIndex: 2,
@@ -31,23 +32,24 @@ const BoxManImage = styled(Box)(() => ({
   "&::after": {
     content: '""',
     position: "absolute",
-    left: "calc(28% - 30px)",
+    left: "calc(28% - 80px)",
     top: "-30px",
     zIndex: 1,
-    height: "100%",
-    width: "75%",
+    height: "90%",
+    width: "78%",
     backgroundColor: "#eac87c",
     borderRadius: "30px",
   },
 }));
 
-const BoxWomanImage = styled(Box)(() => ({
+const BoxFoodImage = styled(Box)(() => ({
   position: "absolute",
-  right: "-150px",
+  top: "400px",
+  right: "-190px",
   bottom: "70px",
   textAlign: "right",
   img: {
-    width: "85%",
+    width: "55%",
     borderRadius: "50%",
     position: "relative",
     zIndex: 2,
@@ -55,12 +57,12 @@ const BoxWomanImage = styled(Box)(() => ({
   "&::after": {
     content: '""',
     position: "absolute",
-    right: "-40px",
-    top: "-40px",
+    right: "-20px",
+    top: "-30px",
     zIndex: 1,
-    height: "400px",
-    width: "200px",
-    borderRadius: "0px 200px 200px 0px",
+    height: "450px",
+    width: "300px",
+    borderRadius: "0px 220px 220px 0px",
     backgroundColor: " rgba(255, 255, 255, 0.6)",
   },
 }));
@@ -70,7 +72,7 @@ const BoxJobCountries = styled(Card)(() => ({
   padding: "15px",
   position: "absolute",
   bottom: "70px",
-  left: "180px",
+  left: "140px",
   zIndex: 3,
 }));
 
@@ -104,13 +106,34 @@ const Span = styled("span")(() => ({
   },
 }));
 
+const BoxFeatureBooth = styled("div")(() => ({
+  backgroundColor: "#f2f2f2",
+  backgroundSize: "cover",
+  height: "600px",
+  marginTop: "50px",
+  padding: "50px 10px",
+  justifyContent: "center",
+  alignItems: "center",
+}));
+
+const BoxImage = styled("div")(() => ({
+  backgroundColor: "#f2f2f2",
+  backgroundSize: "cover",
+  marginTop: "50px",
+  padding: "50px 220px",
+  justifyContent: "center",
+  alignItems: "center",
+}));
+
 export {
   BoxBackground,
   ManPic,
   BoxManImage,
-  BoxWomanImage,
+  BoxFoodImage,
   BoxJobCountries,
   BoxJobCompanies,
   BoxJobDone,
   Span,
+  BoxFeatureBooth,
+  BoxImage,
 };

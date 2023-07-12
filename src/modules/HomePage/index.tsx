@@ -1,17 +1,17 @@
 import { Layout } from "@/layout";
-import { getLoginState } from "@/store/ducks/auth/slice";
 import { Container, Grid } from "@mui/material";
 import useIsomorphicLayoutEffect from "hooks/useIsomorphicLayoutEffect";
 import { useLogin } from "hooks/useLogin";
-import { useAppSelector } from "hooks/useRedux";
 import { PageComponent } from "next";
 import { useRouter } from "next/router";
-import { Filter } from "./components/Filter";
+import FeaturedBooth from "./components/FeaturedBooth";
 import { Left } from "./components/Left";
-import { Location } from "./components/Location";
+import ListProduct from "./components/ListProduct";
 import { Right } from "./components/Right";
 import { BoxBackground } from "./styled";
-import Banner from "./components/Banner";
+import Coupon from "./components/Coupon";
+import Images from "./components/Image";
+import News from "./components/News";
 
 export const HomePage: PageComponent = () => {
   const { onClick } = useLogin();
@@ -25,17 +25,19 @@ export const HomePage: PageComponent = () => {
 
   return (
     <>
-      <BoxBackground onClick={onClick}>
-        {/* <Container maxWidth="lg" style={{ padding: 0 }}>
+      <BoxBackground>
+        <Container maxWidth="lg" style={{ padding: 0 }}>
           <Grid container columns={12}>
             <Left />
             <Right />
           </Grid>
-        </Container> */}
+        </Container>
       </BoxBackground>
-      {/* <Filter /> */}
-      <Banner />
-      <Location />
+      <ListProduct />
+      <FeaturedBooth />
+      <Coupon />
+      <Images />
+      <News />
     </>
   );
 };
