@@ -1,6 +1,6 @@
 import TextField from "@/form-fields/TextField";
 import {
-  getLoginState,
+  getSignupState,
   toggleLoginModal,
   toggleSignupModal,
 } from "@/store/ducks/auth/slice";
@@ -29,20 +29,32 @@ import toast from "react-hot-toast";
 interface IFormInput {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 const schema = yup.object().shape({
   email: yup.string().email("Email must be a valid email").required(),
   password: yup.string().required(),
+  confirmPassword: yup
+    .string()
+    .test(
+      "not-match",
+      "The confirm password must match the password you entered",
+      function (val) {
+        const password = this.parent.password;
+        return val === password;
+      }
+    )
+    .required(),
 });
 
-export const LoginModal = () => {
-  const open = useAppSelector(getLoginState);
+export const SignupModal = () => {
+  const open = useAppSelector(getSignupState);
   const dispatch = useAppDispatch();
   const { updateIsAuthenticator } = useLogin();
-
   const onClose = () => {
     dispatch(toggleLoginModal());
+    dispatch(toggleSignupModal());
   };
 
   const signIn = useGoogleLogin({
@@ -73,10 +85,6 @@ export const LoginModal = () => {
   const formSubmitHandler = async (e: any) => {
     mutate(e);
   };
-  const onSignup = () => {
-    dispatch(toggleSignupModal(true));
-    dispatch(toggleLoginModal());
-  };
   return (
     <Dialog
       open={open}
@@ -87,10 +95,10 @@ export const LoginModal = () => {
     >
       <DialogTitle textAlign="center" id="alert-dialog-title">
         <Typography variant="h4" fontWeight={500} color="primary.main">
-          Sign In
+          Sign Up
         </Typography>
         <Typography my={1}>
-          Sign In and get access to all the features.
+          Sign Up and get access to all the features.
         </Typography>
       </DialogTitle>
       <DialogContent>
@@ -114,6 +122,13 @@ export const LoginModal = () => {
                   placeholder={"Password"}
                   type="password"
                 />
+                <TextField
+                  sx={{ mt: 4 }}
+                  name="confirmPassword"
+                  label={"Confirm Password"}
+                  placeholder={"Confirm Password"}
+                  type="password"
+                />
               </Stack>
             </form>
           </FormProvider>
@@ -129,31 +144,6 @@ export const LoginModal = () => {
           >
             Login with google
           </Typography>
-          <Stack sx={{ justifyContent: "center", alignItems: "center" }}>
-            <Stack flexDirection={"row"} gap={1}>
-              <Typography
-                color="black"
-                textAlign="center"
-                fontSize={14}
-                mt={2}
-                onClick={() => {
-                  signIn();
-                }}
-              >
-                {"Don't have account?"}
-              </Typography>
-              <Typography
-                color="secondary.main"
-                textAlign="center"
-                fontSize={14}
-                mt={2}
-                style={{ textDecoration: "underline", cursor: "pointer" }}
-                onClick={() => onSignup()}
-              >
-                Signup now
-              </Typography>
-            </Stack>
-          </Stack>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
@@ -167,7 +157,7 @@ export const LoginModal = () => {
           autoFocus
           type="button"
         >
-          Sign In
+          Sign Up
         </Button>
       </DialogActions>
     </Dialog>

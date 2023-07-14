@@ -5,9 +5,11 @@ import { COOKIES, getCookies } from "@/utils/cookies";
 export interface IAuth {
   isAuthenticator: string;
   login: boolean;
+  signup: boolean;
 }
 
 const initialState = {
+  signup: false,
   login: false,
   isAuthenticator: getCookies(COOKIES.token),
 } as IAuth;
@@ -31,6 +33,21 @@ export const authSlice = createSlice({
         login: action.payload,
       };
     },
+    toggleSignupModal: (
+      state: IAuth,
+      action: PayloadAction<undefined | IAuth["signup"]>
+    ) => {
+      if (action.payload === undefined) {
+        return {
+          ...state,
+          signup: !state.signup,
+        };
+      }
+      return {
+        ...state,
+        signup: action.payload,
+      };
+    },
     setIsAuthenticator: (
       state: IAuth,
       action: PayloadAction<IAuth["isAuthenticator"]>
@@ -43,10 +60,12 @@ export const authSlice = createSlice({
   },
 });
 
-export const { toggleLoginModal, setIsAuthenticator } = authSlice.actions;
+export const { toggleLoginModal, setIsAuthenticator, toggleSignupModal } =
+  authSlice.actions;
 
 export const getLoginState = (state: RootState) => state.auth.login;
 export const getIsAuthenticator = (state: RootState) =>
   state.auth.isAuthenticator;
+export const getSignupState = (state: RootState) => state.auth.signup;
 
 export default authSlice.reducer;

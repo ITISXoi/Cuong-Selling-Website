@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
+import { SignupModal } from "@/components/Modal/components/SignupModal";
 
 export const Layout: ReactFCWithChildren = ({ children }) => {
   const router = useRouter();
@@ -14,6 +15,7 @@ export const Layout: ReactFCWithChildren = ({ children }) => {
       <div style={{ overflowX: "hidden", paddingBottom: 50 }}>{children}</div>
       {router.pathname !== routeEnums.jobs && <Footer />}
       <LoginModal />
+      <SignupModal />
       <Toaster />
     </>
   );
