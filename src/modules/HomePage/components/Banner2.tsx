@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Box, Divider, Grid, Rating, Stack, Typography } from "@mui/material";
 import { ImageBooth, StackDesciptionBooth } from "./styled";
 
 const Banner2 = () => {
@@ -11,7 +11,13 @@ const Banner2 = () => {
         </Box>
       </Grid>
       <Grid item xs={8}>
-        <StackDesciptionBooth>
+        <StackDesciptionBooth gap={2}>
+          <Rating
+            name="half-rating-read"
+            defaultValue={2.5}
+            precision={0.5}
+            readOnly
+          />
           <Typography fontSize={"26px"} fontWeight={400}>
             Ăn vặt Nowfood
           </Typography>

@@ -33,8 +33,8 @@ const FeaturedBooth = () => {
         </Stack>
         <Stack sx={{ justifyItems: "center", alignItems: "center", mt: 8 }}>
           <Button
-            variant="outlined"
-            color="primary"
+            variant="contained"
+            color="secondary"
             sx={{ width: "150px", height: "50px" }}
           >
             <Typography fontSize={"20px"}>See more</Typography>
