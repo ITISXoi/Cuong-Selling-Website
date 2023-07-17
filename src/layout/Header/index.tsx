@@ -34,6 +34,10 @@ export const Header = () => {
     router.push(routeEnums.home);
   };
 
+  const onVendros = () => {
+    router.push(routeEnums.vendors);
+  };
+
   return (
     <>
       <StyledAppBar position={scroll ? "fixed" : "absolute"}>
@@ -69,7 +73,7 @@ export const Header = () => {
                 <Button variant="outlined" color="primary" onClick={onLogin}>
                   {"Blog"}
                 </Button>
-                <Button variant="outlined" color="primary" onClick={onLogin}>
+                <Button variant="outlined" color="primary" onClick={onVendros}>
                   {"All Vendors"}
                 </Button>
                 {!isAuthenticator ? (

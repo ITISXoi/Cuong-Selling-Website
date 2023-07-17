@@ -6,4 +6,5 @@ export enum routeEnums {
   location = "/location",
   history = "/history",
   watchlist = "/watch-list",
+  vendors = "/vendors",
 }

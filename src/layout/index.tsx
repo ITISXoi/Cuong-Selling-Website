@@ -11,9 +11,9 @@ export const Layout: ReactFCWithChildren = ({ children }) => {
   const router = useRouter();
   return (
     <>
-      {router.pathname !== routeEnums.jobs && <Header />}
-      <div style={{ overflowX: "hidden", paddingBottom: 50 }}>{children}</div>
-      {router.pathname !== routeEnums.jobs && <Footer />}
+      <Header />
+      <div style={{ overflowX: "hidden" }}>{children}</div>
+      <Footer />
       <LoginModal />
       <SignupModal />
       <Toaster />
