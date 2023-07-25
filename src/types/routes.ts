@@ -7,4 +7,5 @@ export enum routeEnums {
   history = "/history",
   watchlist = "/watch-list",
   vendors = "/vendors",
+  detail = "product/:id",
 }

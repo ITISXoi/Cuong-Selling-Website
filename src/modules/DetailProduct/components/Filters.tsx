@@ -31,7 +31,8 @@ const Filters = () => {
     mode: "onSubmit",
     defaultValues: {},
   });
-  const [value1, setValue1] = useState<number[]>([0, 100]);
+  const [value1, setValue1] = useState<number[]>([0, 10]);
+  console.log("value1", value1);
   const handleChange1 = (
     event: Event,
     newValue: number | number[],
