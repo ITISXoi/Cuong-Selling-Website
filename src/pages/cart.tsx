@@ -1,11 +1,11 @@
-import { DetailProdduct } from "@/modules/DetailProduct";
+import { Cart } from "@/modules/Cart";
 import { COOKIES, getCookies } from "@/utils/cookies";
-import { GetServerSidePropsContext, GetStaticPropsContext } from "next";
+import { GetStaticPropsContext } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-export default DetailProdduct;
+export default Cart;
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+export const getStaticProps = async (ctx: GetStaticPropsContext) => {
   const data = getCookies(COOKIES.token);
   return {
     props: {

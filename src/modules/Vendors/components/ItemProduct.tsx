@@ -11,15 +11,48 @@ import {
 import { Product } from "../utils/type";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { Dispatch, SetStateAction } from "react";
+import { useAppDispatch, useAppSelector } from "hooks/useRedux";
+import { getListProduct, setMyCart } from "@/store/ducks/cart/slice";
 
 interface Props {
   item: Product;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  setItem: Dispatch<SetStateAction<Product | undefined>>;
+  setItem: Dispatch<SetStateAction<Product>>;
 }
 
 const ItemProduct = (props: Props) => {
   const { item, setOpen, setItem } = props;
+  const listProduct = useAppSelector(getListProduct);
+  const dispatch = useAppDispatch();
+  const handleAddToCart = () => {
+    const existingItem = listProduct.find((record) => record.id === item.id);
+    if (existingItem) {
+      const newProduct = listProduct.map((record) =>
+        record.id === item.id
+          ? { ...record, quantity: record.quantity + 1 }
+          : {
+              id: item.id,
+              name: item.name,
+              url: item.url,
+              quantity: 1,
+              price: item.price,
+            }
+      );
+      dispatch(setMyCart(newProduct));
+    } else {
+      const newProduct = [
+        ...listProduct,
+        {
+          id: item.id,
+          name: item.name,
+          url: item.url,
+          quantity: 1,
+          price: item.price,
+        },
+      ];
+      dispatch(setMyCart(newProduct));
+    }
+  };
   return (
     <Grid item xs={4} key={item.id}>
       <Stack
@@ -44,7 +77,7 @@ const ItemProduct = (props: Props) => {
           />
           <Rating
             name="half-rating-read"
-            defaultValue={item.rating}
+            value={Number(item.rating)}
             precision={0.5}
             readOnly
             sx={{
@@ -55,26 +88,25 @@ const ItemProduct = (props: Props) => {
             size="small"
           />
         </Stack>
-        <Stack padding={"10px 20px"} gap={2} marginTop={"-20px"}>
+        <Stack padding={"10px 20px"} gap={1} marginTop={"-20px"}>
           <Typography fontWeight={600}>{item.name}</Typography>
-          <Typography fontSize={"16px"}>Price: {item.price} VNĐ</Typography>
-        </Stack>
-        <Divider />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            padding: 1,
-          }}
-        >
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<AddShoppingCartIcon />}
+          <Typography fontWeight={400}>Category: {item.category}</Typography>
+          <Stack
+            flexDirection={"row"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
           >
-            {"Add to cart"}
-          </Button>
-        </Box>
+            <Typography fontSize={"16px"}>Price: {item.price} đ</Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddShoppingCartIcon />}
+              onClick={handleAddToCart}
+            >
+              Add
+            </Button>
+          </Stack>
+        </Stack>
       </Stack>
     </Grid>
   );

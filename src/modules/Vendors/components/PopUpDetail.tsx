@@ -1,8 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {
   Button,
   Dialog,
-  DialogActions,
   DialogContentText,
   Rating,
   Slide,
@@ -10,15 +12,14 @@ import {
   Typography,
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Product } from "../utils/type";
-import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import { useAppDispatch, useAppSelector } from "hooks/useRedux";
+import { getListProduct, setMyCart } from "@/store/ducks/cart/slice";
 
 interface Props {
   open: boolean;
-  item: Product | undefined;
+  item: Product;
   handleClose: () => void;
 }
 
@@ -33,8 +34,52 @@ const Transition = React.forwardRef(function Transition(
 
 const PopUpDetail = (props: Props) => {
   const { open, item, handleClose } = props;
-  console.log("item", item);
-
+  const [amount, setAmount] = useState(1);
+  const listProduct = useAppSelector(getListProduct);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    setAmount(1);
+  }, [item]);
+  const handleRemove = () => {
+    if (amount > 0) {
+      setAmount(amount - 1);
+    }
+  };
+  const handleAdd = () => {
+    if (amount < item.amount) {
+      setAmount(amount + 1);
+    }
+  };
+  const handleAddToCart = () => {
+    const existingItem = listProduct.find((record) => record.id === item.id);
+    if (existingItem) {
+      const newProduct = listProduct.map((record) =>
+        record.id === item.id
+          ? { ...record, quantity: record.quantity + amount }
+          : {
+              id: item.id,
+              name: item.name,
+              url: item.url,
+              quantity: amount,
+              price: item.price,
+            }
+      );
+      dispatch(setMyCart(newProduct));
+    } else {
+      const newProduct = [
+        ...listProduct,
+        {
+          id: item.id,
+          name: item.name,
+          url: item.url,
+          quantity: amount,
+          price: item.price,
+        },
+      ];
+      dispatch(setMyCart(newProduct));
+    }
+    handleClose();
+  };
   return (
     <Dialog
       open={open}
@@ -43,14 +88,18 @@ const PopUpDetail = (props: Props) => {
       onClose={handleClose}
       aria-describedby="alert-dialog-slide-description"
     >
-      <Stack flexDirection={"row"} gap={4} sx={{ padding: 2 }}>
+      <Stack
+        flexDirection={"row"}
+        gap={4}
+        sx={{ padding: 2, minWidth: "770px" }}
+      >
         <Stack gap={2}>
           <img
             alt=""
             src={item?.url}
             style={{ borderRadius: "10px", width: "350px" }}
           />
-          <Rating defaultValue={item?.rating} precision={0.5} readOnly />
+          <Rating value={Number(item.rating)} precision={0.5} readOnly />
           <Typography
             sx={{
               fontSize: "22px",
@@ -81,15 +130,27 @@ const PopUpDetail = (props: Props) => {
           >
             Order now:
           </Typography>
-          <Stack flexDirection={"row"} justifyContent={"space-between"}>
+          <Stack
+            sx={{ width: "350px" }}
+            flexDirection={"row"}
+            justifyContent={"space-between"}
+          >
             <Stack flexDirection={"row"} sx={{ alignItems: "center" }} gap={2}>
-              <RemoveCircleOutlineIcon sx={{ cursor: "pointer" }} />
-              <Typography sx={{ fontSize: "24px" }}>10</Typography>
-              <ControlPointIcon sx={{ cursor: "pointer" }} />
+              <RemoveCircleOutlineIcon
+                sx={{ cursor: "pointer" }}
+                onClick={handleRemove}
+              />
+              <Typography sx={{ fontSize: "24px" }}>{amount}</Typography>
+              <ControlPointIcon
+                sx={{ cursor: "pointer" }}
+                onClick={handleAdd}
+              />
             </Stack>
             <Button
-              variant="outlined"
+              disabled={!amount}
+              variant="contained"
               color="primary"
+              onClick={handleAddToCart}
               startIcon={<AddShoppingCartIcon />}
             >
               {"Add to cart"}

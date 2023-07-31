@@ -3,7 +3,7 @@ import type { RootState } from "@/store/index";
 import { COOKIES, getCookies } from "@/utils/cookies";
 
 export interface IAuth {
-  isAuthenticator: string;
+  isAuthenticator: Boolean;
   login: boolean;
   signup: boolean;
 }
@@ -11,7 +11,7 @@ export interface IAuth {
 const initialState = {
   signup: false,
   login: false,
-  isAuthenticator: getCookies(COOKIES.token),
+  isAuthenticator: Boolean(getCookies(COOKIES.token)),
 } as IAuth;
 
 export const authSlice = createSlice({

@@ -1,6 +1,7 @@
 import TextField from "@/form-fields/TextField";
 import {
   getLoginState,
+  setIsAuthenticator,
   toggleLoginModal,
   toggleSignupModal,
 } from "@/store/ducks/auth/slice";
@@ -25,6 +26,9 @@ import { useMutation } from "react-query";
 import { ILoginByPasswordResponse, loginByPassword } from "@/api/user";
 import { IError } from "@/api/types";
 import toast from "react-hot-toast";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../../../firebase";
+import { useRouter } from "next/router";
 
 interface IFormInput {
   email: string;
@@ -37,6 +41,7 @@ const schema = yup.object().shape({
 });
 
 export const LoginModal = () => {
+  const router = useRouter();
   const open = useAppSelector(getLoginState);
   const dispatch = useAppDispatch();
   const { updateIsAuthenticator } = useLogin();
@@ -45,15 +50,17 @@ export const LoginModal = () => {
     dispatch(toggleLoginModal());
   };
 
-  const signIn = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: () => {
-      console.log("Logged in successfully!");
-    },
-    onError: () => {
-      console.log("Error in successfully!");
-    },
-  });
+  const signIn = () => {
+    signInWithPopup(auth, provider)
+      .then((data: any) => {
+        toast.success("Login Success!");
+        dispatch(setIsAuthenticator(true));
+        dispatch(toggleLoginModal());
+        router.push("/");
+        setCookies(COOKIES.token, data.user.accessToken);
+        setCookies(COOKIES.email, data.user.email);
+      })
+  };
 
   const { mutate } = useMutation(loginByPassword, {
     onSuccess: (data: ILoginByPasswordResponse) => {

@@ -20,13 +20,14 @@ export const useLogin = () => {
 
   const updateIsAuthenticator = () => {
     toast.success("Login Success");
-    dispatch(setIsAuthenticator(getCookies(COOKIES.token)));
+    dispatch(setIsAuthenticator(Boolean(getCookies(COOKIES.token))));
     dispatch(toggleLoginModal());
   };
 
   const logout = () => {
     removeCookies(COOKIES.token);
-    dispatch(setIsAuthenticator(getCookies(COOKIES.token)));
+    toast.success("Logout Success");
+    dispatch(setIsAuthenticator(Boolean(getCookies(COOKIES.token))));
   };
 
   return {

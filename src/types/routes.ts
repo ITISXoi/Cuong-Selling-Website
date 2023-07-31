@@ -8,4 +8,5 @@ export enum routeEnums {
   watchlist = "/watch-list",
   vendors = "/vendors",
   detail = "product/:id",
+  cart = "cart",
 }

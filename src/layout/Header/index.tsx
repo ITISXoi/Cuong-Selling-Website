@@ -1,13 +1,6 @@
 import { toggleLoginModal } from "@/store/ducks/auth/slice";
 import { routeEnums } from "@/types/routes";
-import { isServer } from "@/utils/constants";
-import {
-  AccountCircle,
-  EmailOutlined,
-  LoginOutlined,
-  LogoutOutlined,
-  Search,
-} from "@mui/icons-material";
+import { LoginOutlined, LogoutOutlined } from "@mui/icons-material";
 import { Box, Button, Stack, Toolbar, Typography } from "@mui/material";
 import { useHeader } from "hooks/useHeader";
 import { useLogin } from "hooks/useLogin";
@@ -16,6 +9,7 @@ import { useWindowSize } from "hooks/useWindowSize";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ContainerHeader, StyledAppBar } from "./styled";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 export const Header = () => {
   const windowSize = useWindowSize();
@@ -38,6 +32,13 @@ export const Header = () => {
     router.push(routeEnums.vendors);
   };
 
+  const onHomePage = () => {
+    router.push(routeEnums.home);
+  };
+
+  const onCart = () => {
+    router.push(routeEnums.cart);
+  };
   return (
     <>
       <StyledAppBar position={scroll ? "fixed" : "absolute"}>
@@ -67,14 +68,19 @@ export const Header = () => {
                 alignItems="center"
                 direction="row"
               >
-                <Button variant="outlined" color="primary" onClick={onLogin}>
+                <Button variant="outlined" color="primary" onClick={onHomePage}>
                   {"Home"}
-                </Button>
-                <Button variant="outlined" color="primary" onClick={onLogin}>
-                  {"Blog"}
                 </Button>
                 <Button variant="outlined" color="primary" onClick={onVendros}>
                   {"All Vendors"}
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<ShoppingCartIcon />}
+                  onClick={onCart}
+                >
+                  {"Cart"}
                 </Button>
                 {!isAuthenticator ? (
                   <Button
@@ -85,27 +91,6 @@ export const Header = () => {
                   >
                     {windowSize.width > 1024 ? "Sign In" : ""}
                   </Button>
-                ) : (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<AccountCircle />}
-                    onClick={() => router.push(routeEnums.watchlist)}
-                  >
-                    Watch List
-                  </Button>
-                )}
-
-                {!isAuthenticator ? (
-                  // <Button
-                  //   variant="contained"
-                  //   color="secondary"
-                  //   startIcon={<EmailOutlined />}
-                  //   onClick={onSendEmail}
-                  // >
-                  //   {windowSize.width > 1024 ? "Send Email" : ""}
-                  // </Button>
-                  <></>
                 ) : (
                   <Button
                     variant="contained"

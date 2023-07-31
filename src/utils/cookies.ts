@@ -19,6 +19,7 @@ export const removeCookies = (key: string) => {
 };
 
 export const COOKIES = {
+  email: 'email',
   token: "token",
   user: "profile",
   theme: "theme",
