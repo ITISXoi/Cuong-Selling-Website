@@ -56,13 +56,7 @@ const PopUpDetail = (props: Props) => {
       const newProduct = listProduct.map((record) =>
         record.id === item.id
           ? { ...record, quantity: record.quantity + amount }
-          : {
-              id: item.id,
-              name: item.name,
-              url: item.url,
-              quantity: amount,
-              price: item.price,
-            }
+          : { ...record }
       );
       dispatch(setMyCart(newProduct));
     } else {
@@ -74,6 +68,8 @@ const PopUpDetail = (props: Props) => {
           url: item.url,
           quantity: amount,
           price: item.price,
+          rating: item.rating,
+          amount: item.amount,
         },
       ];
       dispatch(setMyCart(newProduct));

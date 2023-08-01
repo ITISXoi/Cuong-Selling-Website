@@ -7,7 +7,9 @@ export interface IProduct {
   price: number;
   quantity: number;
   category: string;
+  rating: number | string;
   url: string;
+  amount: number;
 }
 
 export interface ICart {

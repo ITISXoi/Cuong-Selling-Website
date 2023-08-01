@@ -1,17 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { IJobListRequest, useCrawlJobsList } from "@/api/filter";
 import { Layout } from "@/layout";
-import { getFilter } from "@/store/ducks/job/slice";
-import { useAppSelector } from "hooks/useRedux";
 import { PageComponent } from "next";
-import { useEffect, useState } from "react";
-// import { BoxBackground } from "./styled";
+import { BoxBackground } from "./styled";
+import CartDetail from "./components/CartDetail";
 
 export const Cart: PageComponent = () => {
   return (
     <>
-      {/* <BoxBackground /> */}
-      {/* <AllVendors /> */}
+      <BoxBackground />
+      <CartDetail />
     </>
   );
 };

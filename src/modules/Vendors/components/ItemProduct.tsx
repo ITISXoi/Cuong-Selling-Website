@@ -30,13 +30,7 @@ const ItemProduct = (props: Props) => {
       const newProduct = listProduct.map((record) =>
         record.id === item.id
           ? { ...record, quantity: record.quantity + 1 }
-          : {
-              id: item.id,
-              name: item.name,
-              url: item.url,
-              quantity: 1,
-              price: item.price,
-            }
+          : { ...record }
       );
       dispatch(setMyCart(newProduct));
     } else {
@@ -48,6 +42,8 @@ const ItemProduct = (props: Props) => {
           url: item.url,
           quantity: 1,
           price: item.price,
+          rating: item.rating,
+          amount: item.amount,
         },
       ];
       dispatch(setMyCart(newProduct));
