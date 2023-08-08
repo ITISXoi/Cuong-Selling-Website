@@ -8,11 +8,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Product } from "../utils/type";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { Dispatch, SetStateAction } from "react";
 import { useAppDispatch, useAppSelector } from "hooks/useRedux";
 import { getListProduct, setMyCart } from "@/store/ducks/cart/slice";
+import { useLogin } from "hooks/useLogin";
+import { toggleLoginModal } from "@/store/ducks/auth/slice";
 
 interface Props {
   item: Product;
@@ -22,8 +23,12 @@ interface Props {
 
 const ItemProduct = (props: Props) => {
   const { item, setOpen, setItem } = props;
+  const { isAuthenticator } = useLogin();
   const listProduct = useAppSelector(getListProduct);
   const dispatch = useAppDispatch();
+  const onLogin = () => {
+    dispatch(toggleLoginModal());
+  };
   const handleAddToCart = () => {
     const existingItem = listProduct.find((record) => record.id === item.id);
     if (existingItem) {
@@ -97,7 +102,7 @@ const ItemProduct = (props: Props) => {
               variant="contained"
               color="primary"
               startIcon={<AddShoppingCartIcon />}
-              onClick={handleAddToCart}
+              onClick={!isAuthenticator ? onLogin : handleAddToCart}
             >
               Add
             </Button>

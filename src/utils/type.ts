@@ -1,4 +1,4 @@
-export interface Product {
+interface Product {
   id: string;
   url: string;
   name: string;
@@ -9,4 +9,5 @@ export interface Product {
   amount: number;
   createdAt: string;
   updatedAt: string;
+  quantity: number;
 }

@@ -1,27 +1,78 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { getListProduct } from "@/store/ducks/cart/slice";
+import {
+  getCart,
+  getListProduct,
+  getOrderStatus,
+} from "@/store/ducks/cart/slice";
 import { formatPrice } from "@/utils/common";
 import { Button, Stack, Typography } from "@mui/material";
+import { push, ref, set, update } from "firebase/database";
 import { useAppSelector } from "hooks/useRedux";
-import { useEffect, useMemo } from "react";
-interface IFormInput {
-  name: string;
-  minPrice: string;
-  maxPrice: string;
+import { useEffect, useMemo, useState } from "react";
+import { db } from "../../../../firebase";
+import { COOKIES, getCookies } from "@/utils/cookies";
+import toast from "react-hot-toast";
+import moment from "moment";
+import { OrderModal } from "./OrderModal";
+
+interface Props {
+  listProductCart: Product[];
 }
 
-interface Props {}
-
 const TotalPrice = (props: Props) => {
-  const {} = props;
-  const listProduct = useAppSelector(getListProduct);
+  const { listProductCart } = props;
+  const currentCart = useAppSelector(getCart);
+  const status = useAppSelector(getOrderStatus);
+  const [open, setOpen] = useState(false);
+
   const totalPrice = useMemo(() => {
     let totalQuantity = 0;
-    listProduct.map((record) => {
+    listProductCart.map((record) => {
       totalQuantity += record.quantity * record.price;
     });
     return totalQuantity;
-  }, [listProduct]);
+  }, [listProductCart]);
+  const handleCreatNew = () => {
+    const productKey = push(ref(db, "user")).key;
+    const email = getCookies(COOKIES.email);
+    set(ref(db, "user/" + productKey), {
+      id: productKey,
+      email: email,
+      cart: listProductCart,
+      totalPrice: totalPrice,
+      status: "NEW",
+      createdAt: moment(new Date()).format("DD MMM YYYY"),
+      updatedAt: "",
+    })
+      .then(() => {
+        toast.success("Order success!");
+      })
+      .catch(() => {
+        toast.error("Order fail!");
+      });
+  };
+  const handleUpdate = () => {
+    const email = getCookies(COOKIES.email);
+    update(ref(db, "user/" + currentCart.cartId), {
+      email,
+      id: currentCart.cartId,
+      status: currentCart.status,
+      cart: listProductCart,
+      totalPrice: totalPrice,
+      createdAt: moment(new Date()).format("DD MMM YYYY"),
+      updatedAt: moment(new Date()).format("DD MMM YYYY"),
+    })
+      .then(() => {
+        toast.success("Update new product success!");
+      })
+      .catch(() => {
+        toast.error("Update new product fail!");
+      });
+  };
+  console.log("currentCart", currentCart);
+  console.log("status", status);
+
+
   return (
     <Stack
       gap={2}
@@ -33,7 +84,7 @@ const TotalPrice = (props: Props) => {
         justifyContent: "space-between",
       }}
     >
-      {listProduct.map((item) => (
+      {listProductCart.map((item) => (
         <Stack
           flexDirection={"row"}
           key={item.id}
@@ -61,9 +112,24 @@ const TotalPrice = (props: Props) => {
           {formatPrice(totalPrice)} VNĐ
         </Typography>
       </Stack>
-      <Button variant="contained" color="info">
+      {status ? (
+        <Button variant="contained" color="info" onClick={handleUpdate}>
+          Update your cart
+        </Button>
+      ) : (
+        <Button variant="contained" color="info" onClick={handleCreatNew}>
+          Create new cart
+        </Button>
+      )}
+      <Button variant="contained" color="info" onClick={() => setOpen(true)}>
         Order Now
       </Button>
+      <OrderModal
+        open={open}
+        setOpen={setOpen}
+        listProductCart={listProductCart}
+        totalPrice={totalPrice}
+      />
     </Stack>
   );
 };

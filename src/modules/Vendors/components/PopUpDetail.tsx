@@ -16,6 +16,8 @@ import React, { useEffect, useState } from "react";
 import { Product } from "../utils/type";
 import { useAppDispatch, useAppSelector } from "hooks/useRedux";
 import { getListProduct, setMyCart } from "@/store/ducks/cart/slice";
+import { useLogin } from "hooks/useLogin";
+import { toggleLoginModal } from "@/store/ducks/auth/slice";
 
 interface Props {
   open: boolean;
@@ -35,6 +37,7 @@ const Transition = React.forwardRef(function Transition(
 const PopUpDetail = (props: Props) => {
   const { open, item, handleClose } = props;
   const [amount, setAmount] = useState(1);
+  const { isAuthenticator } = useLogin();
   const listProduct = useAppSelector(getListProduct);
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -49,6 +52,9 @@ const PopUpDetail = (props: Props) => {
     if (amount < item.amount) {
       setAmount(amount + 1);
     }
+  };
+  const onLogin = () => {
+    dispatch(toggleLoginModal());
   };
   const handleAddToCart = () => {
     const existingItem = listProduct.find((record) => record.id === item.id);
@@ -146,7 +152,7 @@ const PopUpDetail = (props: Props) => {
               disabled={!amount}
               variant="contained"
               color="primary"
-              onClick={handleAddToCart}
+              onClick={!isAuthenticator ? onLogin : handleAddToCart}
               startIcon={<AddShoppingCartIcon />}
             >
               {"Add to cart"}

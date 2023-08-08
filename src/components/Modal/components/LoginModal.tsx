@@ -1,3 +1,5 @@
+import { IError } from "@/api/types";
+import { ILoginByPasswordResponse, loginByPassword } from "@/api/user";
 import TextField from "@/form-fields/TextField";
 import {
   getLoginState,
@@ -5,6 +7,8 @@ import {
   toggleLoginModal,
   toggleSignupModal,
 } from "@/store/ducks/auth/slice";
+import { COOKIES, setCookies } from "@/utils/cookies";
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Button,
   Dialog,
@@ -15,20 +19,16 @@ import {
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useGoogleLogin } from "@react-oauth/google";
-import { useAppDispatch, useAppSelector } from "hooks/useRedux";
-import { FormProvider, useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { COOKIES, setCookies } from "@/utils/cookies";
-import { useLogin } from "hooks/useLogin";
-import { useMutation } from "react-query";
-import { ILoginByPasswordResponse, loginByPassword } from "@/api/user";
-import { IError } from "@/api/types";
-import toast from "react-hot-toast";
 import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "../../../../firebase";
+import { useLogin } from "hooks/useLogin";
+import { useAppDispatch, useAppSelector } from "hooks/useRedux";
 import { useRouter } from "next/router";
+import { FormProvider, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useMutation } from "react-query";
+import * as yup from "yup";
+import { auth, provider } from "../../../../firebase";
+import useService from "../hooks/useService";
 
 interface IFormInput {
   email: string;
@@ -45,21 +45,21 @@ export const LoginModal = () => {
   const open = useAppSelector(getLoginState);
   const dispatch = useAppDispatch();
   const { updateIsAuthenticator } = useLogin();
-
+  const { fetchAPI } = useService();
   const onClose = () => {
     dispatch(toggleLoginModal());
   };
 
   const signIn = () => {
-    signInWithPopup(auth, provider)
-      .then((data: any) => {
-        toast.success("Login Success!");
-        dispatch(setIsAuthenticator(true));
-        dispatch(toggleLoginModal());
-        router.push("/");
-        setCookies(COOKIES.token, data.user.accessToken);
-        setCookies(COOKIES.email, data.user.email);
-      })
+    signInWithPopup(auth, provider).then((data: any) => {
+      toast.success("Login Success!");
+      dispatch(setIsAuthenticator(true));
+      dispatch(toggleLoginModal());
+      router.push("/");
+      setCookies(COOKIES.token, data.user.accessToken);
+      setCookies(COOKIES.email, data.user.email);
+      fetchAPI();
+    });
   };
 
   const { mutate } = useMutation(loginByPassword, {

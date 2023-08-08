@@ -1,23 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-import { getListProduct } from "@/store/ducks/cart/slice";
+import { COOKIES, getCookies } from "@/utils/cookies";
 import { Container, Grid, Stack } from "@mui/material";
-import { useAppSelector } from "hooks/useRedux";
+import { equalTo, onValue, orderByChild, query, ref } from "firebase/database";
+import { useEffect, useState } from "react";
+import { db } from "../../../../firebase";
 import ItemProduct from "./ItemProduct";
 import TotalPrice from "./TotalPrice";
-
-interface Product {
-  id: string;
-  url: string;
-  name: string;
-  price: number;
-  category: string;
-  rating: number | string;
-  description: string;
-  amount: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import { useAppSelector } from "hooks/useRedux";
+import { getListProduct } from "@/store/ducks/cart/slice";
 
 const CartDetail = () => {
   const listProductCart = useAppSelector(getListProduct);
@@ -35,7 +26,7 @@ const CartDetail = () => {
             </Stack>
           </Grid>
           <Grid item xs={4}>
-            <TotalPrice />
+            <TotalPrice listProductCart={listProductCart} />
           </Grid>
         </Grid>
       ) : (

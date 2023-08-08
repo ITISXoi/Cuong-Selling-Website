@@ -1,39 +1,98 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { toggleLoginModal } from "@/store/ducks/auth/slice";
+import {
+  getCart,
+  getListProduct,
+  setCart,
+  setCartId,
+  setMyCart,
+  setOrderStatus,
+} from "@/store/ducks/cart/slice";
+import { ICart, getListOrder, setMyOrder } from "@/store/ducks/order/slice";
 import { routeEnums } from "@/types/routes";
+import { COOKIES, getCookies } from "@/utils/cookies";
 import { LoginOutlined, LogoutOutlined } from "@mui/icons-material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Box, Button, Stack, Toolbar, Typography } from "@mui/material";
+import {
+  equalTo,
+  onValue,
+  orderByChild,
+  push,
+  query,
+  ref,
+  set,
+} from "firebase/database";
 import { useHeader } from "hooks/useHeader";
 import { useLogin } from "hooks/useLogin";
 import { useAppDispatch, useAppSelector } from "hooks/useRedux";
 import { useWindowSize } from "hooks/useWindowSize";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
+import { db } from "../../../firebase";
 import { ContainerHeader, StyledAppBar } from "./styled";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { getListProduct } from "@/store/ducks/cart/slice";
-import { useMemo } from "react";
 
 export const Header = () => {
   const windowSize = useWindowSize();
   const dispatch = useAppDispatch();
+  const listProduct = useAppSelector(getListProduct);
   const { isAuthenticator, logout } = useLogin();
   const router = useRouter();
-  const listItem = useAppSelector(getListProduct);
   const { scroll } = useHeader();
+  const fetchAPI = async () => {
+    try {
+      const queryEmail = query(
+        ref(db, "user"),
+        orderByChild("email"),
+        equalTo(getCookies(COOKIES.email))
+      );
+      onValue(queryEmail, (snapshot) => {
+        if (snapshot.val()) {
+          const data: any[] = Object.values(snapshot.val());
+          dispatch(setMyOrder(data));
+          const currentCart = data.find((item: ICart) =>
+            ["NEW", "PENDING", "PACKING", "SHIPING"].includes(item.status)
+          );
+          console.log("currentCart", currentCart);
+          dispatch(setCart(currentCart));
+          dispatch(setMyCart(currentCart?.cart ? currentCart?.cart : []));
+        }
+      });
+    } catch (error) {
+      console.log("Errors", error);
+    }
+  };
+  useEffect(() => {
+    fetchAPI();
+  }, []);
   const totalItem = useMemo(() => {
     let totalQuantity = 0;
-    listItem.map((record) => {
+    listProduct.map((record) => {
       totalQuantity += record.quantity;
     });
     return totalQuantity;
-  }, [listItem]);
+  }, [listProduct]);
   const onLogin = () => {
     dispatch(toggleLoginModal());
   };
 
   const onLogout = () => {
     logout();
+    dispatch(setMyCart([]));
+    dispatch(setOrderStatus(""));
+    dispatch(setCartId(""));
+    dispatch(
+      setCart({
+        listProduct: [],
+        totalPrice: 0,
+        email: "",
+        status: "",
+        cartId: "",
+      })
+    );
+    dispatch(setMyCart([]));
+    dispatch(setMyOrder([]));
     router.push(routeEnums.home);
   };
 
@@ -92,7 +151,7 @@ export const Header = () => {
                   >
                     {"Cart"}
                   </Button>
-                  {listItem.length > 0 ? (
+                  {totalItem ? (
                     <Box
                       sx={{
                         position: "absolute",

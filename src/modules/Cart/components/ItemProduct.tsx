@@ -7,17 +7,6 @@ import { Button, Rating, Stack, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "hooks/useRedux";
 import { useEffect, useState } from "react";
 
-interface Product {
-  id: string;
-  url: string;
-  name: string;
-  price: number;
-  category: string;
-  rating: number | string;
-  quantity: number;
-  amount: number;
-}
-
 interface Props {
   item: Product;
 }
