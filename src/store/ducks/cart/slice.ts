@@ -8,6 +8,9 @@ export interface ICart {
   email: string;
   cartId: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
+  phoneNumber: string;
 }
 
 const initialState = {
@@ -16,6 +19,9 @@ const initialState = {
   email: getCookies(COOKIES.email),
   status: "",
   cartId: "",
+  createdAt: "",
+  updatedAt: "",
+  phoneNumber: "",
 } as ICart;
 
 export const cartSlice = createSlice({
@@ -50,9 +56,12 @@ export const cartSlice = createSlice({
       return {
         ...state,
         listProduct: actions.payload?.cart ? actions.payload.cart : [],
-        totalPrice: actions.payload.totalPrice,
-        status: actions.payload.status,
-        cartId: actions.payload.id,
+        totalPrice: actions.payload?.totalPrice,
+        status: actions.payload?.status,
+        cartId: actions.payload?.id,
+        updatedAt: actions.payload?.updatedAt,
+        createdAt: actions.payload?.createdAt,
+        phoneNumber: actions.payload?.phoneNumber,
       };
     },
   },

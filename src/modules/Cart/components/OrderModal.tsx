@@ -1,9 +1,8 @@
 import TextField from "@/form-fields/TextField";
-import {
-  getSignupState,
-  toggleLoginModal,
-  toggleSignupModal,
-} from "@/store/ducks/auth/slice";
+import { getCart } from "@/store/ducks/cart/slice";
+import { routeEnums } from "@/types/routes";
+import { COOKIES, getCookies } from "@/utils/cookies";
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Button,
   Dialog,
@@ -14,24 +13,15 @@ import {
   Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { useGoogleLogin } from "@react-oauth/google";
-import { useAppDispatch, useAppSelector } from "hooks/useRedux";
-import { FormProvider, useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { COOKIES, getCookies, setCookies } from "@/utils/cookies";
-import { useLogin } from "hooks/useLogin";
-import { useMutation } from "react-query";
-import { ILoginByPasswordResponse, loginByPassword } from "@/api/user";
-import { IError } from "@/api/types";
-import toast from "react-hot-toast";
-import { Dispatch, SetStateAction } from "react";
-import { getCart } from "@/store/ducks/cart/slice";
 import { push, ref, set, update } from "firebase/database";
-import { db } from "../../../../firebase";
+import { useAppSelector } from "hooks/useRedux";
 import moment from "moment";
 import router from "next/router";
-import { routeEnums } from "@/types/routes";
+import { Dispatch, SetStateAction } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import * as yup from "yup";
+import { db } from "../../../../firebase";
 
 interface IFormInput {
   address: string;
@@ -78,15 +68,18 @@ export const OrderModal = (props: Props) => {
         status: "PENDING",
         cart: listProductCart,
         totalPrice: totalPrice,
-        createdAt: moment(new Date()).format("DD MMM YYYY"),
-        updatedAt: moment(new Date()).format("DD MMM YYYY"),
+        createdAt: currentCart.createdAt,
+        updatedAt: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
+        phoneNumber: e.phoneNumber,
       })
         .then(() => {
-          router.push(routeEnums.home);
+          router.push(routeEnums.cart);
           toast.success("Order success!");
+          setOpen(false);
         })
         .catch(() => {
           toast.error("Order fail!");
+          setOpen(false);
         });
     } else {
       const productKey = push(ref(db, "user")).key;
@@ -99,15 +92,18 @@ export const OrderModal = (props: Props) => {
         status: "PENDING",
         cart: listProductCart,
         totalPrice: totalPrice,
-        createdAt: moment(new Date()).format("DD MMM YYYY"),
-        updatedAt: moment(new Date()).format("DD MMM YYYY"),
+        createdAt: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
+        updatedAt: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
+        phoneNumber: e.phoneNumber,
       })
         .then(() => {
-          router.push(routeEnums.home);
+          router.push(routeEnums.cart);
           toast.success("Order success!");
+          setOpen(false);
         })
         .catch(() => {
           toast.error("Order fail!");
+          setOpen(false);
         });
     }
   };

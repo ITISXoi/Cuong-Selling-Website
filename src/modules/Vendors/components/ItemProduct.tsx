@@ -11,7 +11,11 @@ import {
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { Dispatch, SetStateAction } from "react";
 import { useAppDispatch, useAppSelector } from "hooks/useRedux";
-import { getListProduct, setMyCart } from "@/store/ducks/cart/slice";
+import {
+  getListProduct,
+  getOrderStatus,
+  setMyCart,
+} from "@/store/ducks/cart/slice";
 import { useLogin } from "hooks/useLogin";
 import { toggleLoginModal } from "@/store/ducks/auth/slice";
 
@@ -25,6 +29,7 @@ const ItemProduct = (props: Props) => {
   const { item, setOpen, setItem } = props;
   const { isAuthenticator } = useLogin();
   const listProduct = useAppSelector(getListProduct);
+  const status = useAppSelector(getOrderStatus);
   const dispatch = useAppDispatch();
   const onLogin = () => {
     dispatch(toggleLoginModal());
@@ -99,6 +104,7 @@ const ItemProduct = (props: Props) => {
           >
             <Typography fontSize={"16px"}>Price: {item.price} đ</Typography>
             <Button
+              disabled={["PENDING", "PACKING", "SHIPPING"].includes(status)}
               variant="contained"
               color="primary"
               startIcon={<AddShoppingCartIcon />}

@@ -1,18 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  getCart,
-  getListProduct,
-  getOrderStatus,
-} from "@/store/ducks/cart/slice";
+import { getCart, getOrderStatus } from "@/store/ducks/cart/slice";
 import { formatPrice } from "@/utils/common";
+import { COOKIES, getCookies } from "@/utils/cookies";
 import { Button, Stack, Typography } from "@mui/material";
 import { push, ref, set, update } from "firebase/database";
 import { useAppSelector } from "hooks/useRedux";
-import { useEffect, useMemo, useState } from "react";
-import { db } from "../../../../firebase";
-import { COOKIES, getCookies } from "@/utils/cookies";
-import toast from "react-hot-toast";
 import moment from "moment";
+import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { db } from "../../../../firebase";
 import { OrderModal } from "./OrderModal";
 
 interface Props {
@@ -41,7 +37,7 @@ const TotalPrice = (props: Props) => {
       cart: listProductCart,
       totalPrice: totalPrice,
       status: "NEW",
-      createdAt: moment(new Date()).format("DD MMM YYYY"),
+      createdAt: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
       updatedAt: "",
     })
       .then(() => {
@@ -59,8 +55,8 @@ const TotalPrice = (props: Props) => {
       status: currentCart.status,
       cart: listProductCart,
       totalPrice: totalPrice,
-      createdAt: moment(new Date()).format("DD MMM YYYY"),
-      updatedAt: moment(new Date()).format("DD MMM YYYY"),
+      createdAt: currentCart.createdAt,
+      updatedAt: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
     })
       .then(() => {
         toast.success("Update new product success!");
@@ -69,9 +65,24 @@ const TotalPrice = (props: Props) => {
         toast.error("Update new product fail!");
       });
   };
-  console.log("currentCart", currentCart);
-  console.log("status", status);
-
+  const handleDoneOrder = () => {
+    const email = getCookies(COOKIES.email);
+    update(ref(db, "user/" + currentCart.cartId), {
+      email,
+      id: currentCart.cartId,
+      status: "DONE",
+      cart: listProductCart,
+      totalPrice: totalPrice,
+      createdAt: currentCart.createdAt,
+      updatedAt: moment(new Date()).format("DD-MM-YYYY HH:mm:ss"),
+    })
+      .then(() => {
+        toast.success("Complete success!");
+      })
+      .catch(() => {
+        toast.error("Complete fail!");
+      });
+  };
 
   return (
     <Stack
@@ -112,18 +123,37 @@ const TotalPrice = (props: Props) => {
           {formatPrice(totalPrice)} VNĐ
         </Typography>
       </Stack>
-      {status ? (
-        <Button variant="contained" color="info" onClick={handleUpdate}>
-          Update your cart
+      {status === "NEW" ? (
+        <Stack flexDirection={"column"} gap={2}>
+          <Button variant="contained" color="info" onClick={handleUpdate}>
+            Update your cart
+          </Button>
+          <Button
+            variant="contained"
+            color="info"
+            onClick={() => setOpen(true)}
+          >
+            Order Now
+          </Button>
+        </Stack>
+      ) : !status ? (
+        <Stack flexDirection={"column"} gap={2}>
+          <Button variant="contained" color="info" onClick={handleCreatNew}>
+            Create new cart
+          </Button>
+          <Button
+            variant="contained"
+            color="info"
+            onClick={() => setOpen(true)}
+          >
+            Order Now
+          </Button>
+        </Stack>
+      ) : status === "SHIPPING" ? (
+        <Button variant="contained" color="success" onClick={handleDoneOrder}>
+          Received Order
         </Button>
-      ) : (
-        <Button variant="contained" color="info" onClick={handleCreatNew}>
-          Create new cart
-        </Button>
-      )}
-      <Button variant="contained" color="info" onClick={() => setOpen(true)}>
-        Order Now
-      </Button>
+      ) : null}
       <OrderModal
         open={open}
         setOpen={setOpen}

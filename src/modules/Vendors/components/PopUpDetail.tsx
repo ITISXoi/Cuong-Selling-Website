@@ -13,9 +13,12 @@ import {
 } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React, { useEffect, useState } from "react";
-import { Product } from "../utils/type";
 import { useAppDispatch, useAppSelector } from "hooks/useRedux";
-import { getListProduct, setMyCart } from "@/store/ducks/cart/slice";
+import {
+  getListProduct,
+  getOrderStatus,
+  setMyCart,
+} from "@/store/ducks/cart/slice";
 import { useLogin } from "hooks/useLogin";
 import { toggleLoginModal } from "@/store/ducks/auth/slice";
 
@@ -39,6 +42,7 @@ const PopUpDetail = (props: Props) => {
   const [amount, setAmount] = useState(1);
   const { isAuthenticator } = useLogin();
   const listProduct = useAppSelector(getListProduct);
+  const status = useAppSelector(getOrderStatus);
   const dispatch = useAppDispatch();
   useEffect(() => {
     setAmount(1);
@@ -149,7 +153,9 @@ const PopUpDetail = (props: Props) => {
               />
             </Stack>
             <Button
-              disabled={!amount}
+              disabled={
+                !amount || ["PENDING", "PACKING", "SHIPPING"].includes(status)
+              }
               variant="contained"
               color="primary"
               onClick={!isAuthenticator ? onLogin : handleAddToCart}

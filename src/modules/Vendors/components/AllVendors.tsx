@@ -4,7 +4,6 @@ import { Container, Grid } from "@mui/material";
 import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { db } from "../../../../firebase";
-import { Product } from "../utils/type";
 import Filters from "./Filters";
 import ItemProduct from "./ItemProduct";
 import PopUpDetail from "./PopUpDetail";
@@ -26,6 +25,7 @@ const AllVendors = () => {
     category: "",
     createdAt: "",
     description: "",
+    quantity: 0,
     id: "",
     name: "",
     price: 0,

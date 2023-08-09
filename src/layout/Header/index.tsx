@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { toggleLoginModal } from "@/store/ducks/auth/slice";
 import {
-  getCart,
   getListProduct,
   setCart,
   setCartId,
@@ -14,22 +13,14 @@ import { COOKIES, getCookies } from "@/utils/cookies";
 import { LoginOutlined, LogoutOutlined } from "@mui/icons-material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Box, Button, Stack, Toolbar, Typography } from "@mui/material";
-import {
-  equalTo,
-  onValue,
-  orderByChild,
-  push,
-  query,
-  ref,
-  set,
-} from "firebase/database";
+import { equalTo, onValue, orderByChild, query, ref } from "firebase/database";
 import { useHeader } from "hooks/useHeader";
 import { useLogin } from "hooks/useLogin";
 import { useAppDispatch, useAppSelector } from "hooks/useRedux";
 import { useWindowSize } from "hooks/useWindowSize";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { db } from "../../../firebase";
 import { ContainerHeader, StyledAppBar } from "./styled";
 
@@ -37,6 +28,7 @@ export const Header = () => {
   const windowSize = useWindowSize();
   const dispatch = useAppDispatch();
   const listProduct = useAppSelector(getListProduct);
+  const listOrder = useAppSelector(getListOrder);
   const { isAuthenticator, logout } = useLogin();
   const router = useRouter();
   const { scroll } = useHeader();
@@ -52,7 +44,7 @@ export const Header = () => {
           const data: any[] = Object.values(snapshot.val());
           dispatch(setMyOrder(data));
           const currentCart = data.find((item: ICart) =>
-            ["NEW", "PENDING", "PACKING", "SHIPING"].includes(item.status)
+            ["NEW", "PENDING", "PACKING", "SHIPPING"].includes(item.status)
           );
           console.log("currentCart", currentCart);
           dispatch(setCart(currentCart));
@@ -76,6 +68,10 @@ export const Header = () => {
   const onLogin = () => {
     dispatch(toggleLoginModal());
   };
+  const listOldOrder = useMemo(() => {
+    return listOrder.filter((item) => item.status === "DONE");
+  }, [listOrder]);
+  console.log("listOldOrder", listOldOrder);
 
   const onLogout = () => {
     logout();
@@ -140,8 +136,17 @@ export const Header = () => {
                   {"Home"}
                 </Button>
                 <Button variant="outlined" color="primary" onClick={onVendros}>
-                  {"All Vendors"}
+                  {"All Product"}
                 </Button>
+                {listOldOrder?.length ? (
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={onVendros}
+                  >
+                    {"Old Order"}
+                  </Button>
+                ) : null}
                 <Stack flexDirection={"row"} sx={{ marginRight: "20px" }}>
                   <Button
                     variant="outlined"
@@ -170,7 +175,6 @@ export const Header = () => {
                     </Box>
                   ) : null}
                 </Stack>
-
                 {!isAuthenticator ? (
                   <Button
                     variant="outlined"

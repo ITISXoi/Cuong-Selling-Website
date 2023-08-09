@@ -1,6 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-import { getListProduct, setMyCart } from "@/store/ducks/cart/slice";
+import {
+  getListProduct,
+  getOrderStatus,
+  setMyCart,
+} from "@/store/ducks/cart/slice";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { Button, Rating, Stack, Typography } from "@mui/material";
@@ -15,6 +19,7 @@ const ItemProduct = (props: Props) => {
   const { item } = props;
   const [amount, setAmount] = useState(item.quantity);
   const listProduct = useAppSelector(getListProduct);
+  const status = useAppSelector(getOrderStatus);
   const dispatch = useAppDispatch();
   const handleAddToCart = () => {
     const existingItem = listProduct.find((record) => record.id === item.id);
@@ -33,12 +38,12 @@ const ItemProduct = (props: Props) => {
     }
   };
   const handleRemove = () => {
-    if (amount > 1) {
+    if (amount > 1 && (!status || status === "NEW")) {
       setAmount(amount - 1);
     }
   };
   const handleAdd = () => {
-    if (amount < item.amount) {
+    if (amount < item.amount && (!status || status === "NEW")) {
       setAmount(amount + 1);
     }
   };
@@ -80,7 +85,7 @@ const ItemProduct = (props: Props) => {
         </Stack>
       </Stack>
       <Stack gap={2} justifyContent={"center"} alignItems={"center"}>
-        <Stack flexDirection={"row"} gap={1}>
+        {!status || status === "NEW" ? (
           <Button
             variant="contained"
             color="error"
@@ -88,8 +93,7 @@ const ItemProduct = (props: Props) => {
           >
             Remove
           </Button>
-        </Stack>
-
+        ) : null}
         <Stack flexDirection={"row"} sx={{ alignItems: "center" }} gap={2}>
           <RemoveCircleOutlineIcon
             sx={{ cursor: "pointer" }}
