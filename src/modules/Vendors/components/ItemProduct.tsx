@@ -47,6 +47,7 @@ const ItemProduct = (props: Props) => {
       const newProduct = [
         ...listProduct,
         {
+          category: item.category,
           id: item.id,
           name: item.name,
           url: item.url,
@@ -54,6 +55,10 @@ const ItemProduct = (props: Props) => {
           price: item.price,
           rating: item.rating,
           amount: item.amount,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          description: item.description,
+          comment: item?.comment.length ? [...item.comment] : [],
         },
       ];
       dispatch(setMyCart(newProduct));

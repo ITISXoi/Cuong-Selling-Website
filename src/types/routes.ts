@@ -9,4 +9,6 @@ export enum routeEnums {
   vendors = "/vendors",
   detail = "product/:id",
   cart = "cart",
+  allOrder = "old-order",
+  oldOrder = "old-order/:id",
 }

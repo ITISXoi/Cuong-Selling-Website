@@ -10,4 +10,5 @@ interface Product {
   createdAt: string;
   updatedAt: string;
   quantity: number;
+  comment: [{ rating: number; quanlity: string }];
 }

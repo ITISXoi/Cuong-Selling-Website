@@ -71,7 +71,6 @@ export const Header = () => {
   const listOldOrder = useMemo(() => {
     return listOrder.filter((item) => item.status === "DONE");
   }, [listOrder]);
-  console.log("listOldOrder", listOldOrder);
 
   const onLogout = () => {
     logout();
@@ -102,6 +101,9 @@ export const Header = () => {
 
   const onCart = () => {
     router.push(routeEnums.cart);
+  };
+  const onOldOder = () => {
+    router.push(routeEnums.allOrder);
   };
   return (
     <>
@@ -142,7 +144,7 @@ export const Header = () => {
                   <Button
                     variant="outlined"
                     color="primary"
-                    onClick={onVendros}
+                    onClick={onOldOder}
                   >
                     {"Old Order"}
                   </Button>

@@ -8,6 +8,10 @@ export interface ICart {
   id: string;
   totalPrice: number;
   status: string;
+  address: string;
+  state: string;
+  city: string;
+  phoneNumber: string;
 }
 
 export interface IOrder {
